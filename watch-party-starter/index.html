@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#09090d" />
+  <title>Watch Together</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f4f4f8;background:#09090d;font-synthesis:none}*{box-sizing:border-box}body{margin:0;min-width:320px;background:radial-gradient(ellipse at top,#211638 0,#09090d 55%)}button,input{font:inherit}button{border:0;border-radius:12px;padding:12px 16px;background:#8b5cf6;color:white;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:#292936}input{width:100%;padding:13px 14px;color:#fff;background:#111119;border:1px solid #393946;border-radius:12px;outline:none}input:focus{border-color:#9b7bff}.shell{width:min(1180px,94%);margin:28px auto 50px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px}.brand{font-size:14px;font-weight:850;letter-spacing:1.8px;color:#c4b5fd}.eyebrow{font-size:11px;letter-spacing:2px;color:#b9a4ff;font-weight:800}.hero h1{font-size:clamp(32px,6vw,54px);letter-spacing:-1.8px;margin:8px 0}.muted{color:#aaaabb;line-height:1.5}.panel{background:rgba(21,21,30,.92);border:1px solid #30303d;border-radius:20px;padding:22px;box-shadow:0 18px 50px #0003}.landing{max-width:480px;margin:45px auto}.field{display:block;font-size:13px;color:#d6d6e2;margin:15px 0 6px}.stack{display:grid;gap:10px}.or{display:flex;align-items:center;gap:12px;margin:22px 0;color:#858596;font-size:11px;letter-spacing:1.4px}.or:before,.or:after{content:"";height:1px;background:#333340;flex:1}.room-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:20px 0}.room-head h1{margin:3px 0;font-size:clamp(26px,4vw,38px)}.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(270px,1fr);gap:16px}.video{display:block;width:100%;max-height:64vh;aspect-ratio:16/9;background:#000;border-radius:14px}.hint{font-size:12px;color:#9999aa}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.chip{font-size:12px;border-radius:999px;padding:7px 11px;background:#282638;color:#ded7ff}.voicebox{border-top:1px solid #333340;margin-top:20px;padding-top:18px;display:grid;gap:10px}.voice-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.voice-state{font-size:12px;color:#bdbdcb}.chat{display:flex;flex-direction:column;min-height:420px;max-height:70vh}.chat h2{margin:0 0 15px;font-size:18px}.messages{overflow:auto;flex:1;min-height:180px}.message{background:#20202c;border-radius:12px;padding:10px 12px;margin:0 0 9px;overflow-wrap:anywhere}.message strong{font-size:12px;color:#d5c8ff}.message p{margin:5px 0 0;white-space:pre-wrap}.chat-form{display:flex;gap:8px;margin-top:14px}.chat-form input{min-width:0;margin:0}.chat-form button{padding:10px 14px}.notice{font-size:12px;color:#aaaabc;line-height:1.5;margin-top:18px}.status{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#bcbccc}.dot{width:7px;height:7px;border-radius:50%;background:#f59e0b}.dot.ok{background:#34d399}.hidden{display:none!important}.footer{font-size:11px;color:#777789;text-align:center;margin:24px 0}.error{color:#fca5a5;font-size:13px;white-space:pre-wrap}
+    @media(max-width:780px){.shell{margin-top:18px}.layout{grid-template-columns:1fr}.room-head{align-items:flex-start;flex-direction:column}.chat{min-height:340px;max-height:55vh}.panel{padding:16px}.landing{margin:25px auto}.topbar{margin-bottom:18px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar"><div class="brand">◉ WATCH TOGETHER</div><div class="status"><span id="statusDot" class="dot"></span><span id="connectionStatus">Not connected</span></div></div>
+    <section id="landing" class="panel landing">
+      <div class="hero"><div class="eyebrow">YOUR PRIVATE CINEMA</div><h1>Movie night,<br>together.</h1><p class="muted">Sync a video, chat live, and talk with your partner from iPhone or Android.</p></div>
+      <label class="field" for="displayName">Your display name</label><input id="displayName" maxlength="40" placeholder="e.g. Shubham" value="Guest" />
+      <div class="stack" style="margin-top:16px"><button id="createBtn">Create a party</button></div>
+      <div class="or">OR JOIN A FRIEND</div>
+      <label class="field" for="roomIdInput">Room ID or invite link</label><input id="roomIdInput" placeholder="Paste room ID or invite link" />
+      <div class="stack" style="margin-top:10px"><button id="joinBtn" class="secondary">Join party</button></div>
+      <p class="notice">This starter uses a public demo video. It does not extract or embed 7Reels streams. Both people must have permission to view the same video source.</p>
+      <p id="landingError" class="error"></p>
+    </section>
+
+    <section id="roomView" class="hidden">
+      <div class="room-head"><div><div class="eyebrow">WATCH PARTY</div><h1>Movie night</h1><div class="muted" id="roomMeta">Room</div></div><div class="stack" style="min-width:150px"><button id="copyInviteBtn">Copy invite link</button><button id="leaveBtn" class="secondary">Leave room</button></div></div>
+      <div class="layout">
+        <section class="panel">
+          <video id="video" class="video" controls playsinline preload="metadata" crossorigin="anonymous"><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4"></video>
+          <p id="playbackHint" class="hint">Demo video. Host controls playback; guest follows.</p>
+          <div><strong style="font-size:13px">In this room</strong><div id="participants" class="chips"></div></div>
+          <div class="voicebox"><strong style="font-size:14px">Voice chat</strong><div class="voice-row"><button id="voiceBtn">Enable microphone</button><button id="muteBtn" class="secondary" disabled>Mute</button><span id="voiceStatus" class="voice-state">Not connected</span></div><audio id="remoteAudio" autoplay playsinline></audio><p class="hint">Allow microphone access when prompted. If voice does not connect across networks, a TURN relay may be needed.</p></div>
+        </section>
+        <aside class="panel chat"><h2>Party chat</h2><div id="messages" class="messages"><p class="muted" id="emptyChat">No messages yet. Say hello.</p></div><form id="chatForm" class="chat-form"><input id="chatInput" maxlength="500" placeholder="Send a message…" autocomplete="off"/><button type="submit">Send</button></form><p class="notice">Room links are unlisted, not secure authentication. Don't use this prototype for sensitive conversations.</p></aside>
+      </div>
+    </section>
+    <p id="globalError" class="error"></p>
+    <div class="footer">Prototype · Use authorized video sources · HTTPS required for microphone access</div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // Add your Supabase project values below before testing.
+    const SUPABASE_URL = 'https://curzwkjwtrkvxxyrbrmk.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_yheT7B2D8e5y8tpLz_8T8w_3U4pVcTW';
+    const configured = !SUPABASE_URL.includes('YOUR_PROJECT') && !SUPABASE_PUBLISHABLE_KEY.includes('YOUR_SUPABASE');
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    const state = { room:'', role:'guest', name:'Guest', channel:null, pc:null, localStream:null, remoteCandidates:[], messagesSeen:new Set(), members:new Map(), connected:false, muted:false, tearingDown:false, syncTimer:null, lastPlaybackSent:0 };
+    let supabase = null;
+    if (configured) supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const uid = () => crypto.randomUUID();
+    const roomCode = () => crypto.randomUUID().replaceAll('-','').slice(0,12).toUpperCase();
+    function setStatus(text, ok=false){ $('connectionStatus').textContent=text; $('statusDot').classList.toggle('ok',ok); }
+    function showError(text, landing=false){ (landing ? $('landingError') : $('globalError')).textContent=text; }
+    function escapeHtml(text){ return String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function getRoomFromInput(raw){ const value=raw.trim(); if(!value) return ''; try { const url=new URL(value); return url.searchParams.get('room') || value; } catch { return value.replace(/[^a-zA-Z0-9_-]/g,'').slice(0,64); } }
+
+    $('createBtn').addEventListener('click',()=>startRoom(roomCode(),'host'));
+    $('joinBtn').addEventListener('click',()=>{ const id=getRoomFromInput($('roomIdInput').value); if(!id) return showError('Enter a room ID or invite link.',true); startRoom(id,'guest'); });
+    $('copyInviteBtn').addEventListener('click',async()=>{ const link=`${location.origin}${location.pathname}?room=${encodeURIComponent(state.room)}`; try { await navigator.clipboard.writeText(link); $('copyInviteBtn').textContent='Link copied!'; setTimeout(()=>$('copyInviteBtn').textContent='Copy invite link',1800); } catch { prompt('Copy this invitation link:',link); } });
+    $('leaveBtn').addEventListener('click',leaveRoom);
+    $('chatForm').addEventListener('submit',async e=>{ e.preventDefault(); const text=$('chatInput').value.trim(); if(!text||!state.channel)return; $('chatInput').value=''; const message={id:uid(),name:state.name,text:text.slice(0,500),at:Date.now()}; addMessage(message); await broadcast({type:'chat',message}); });
+    $('voiceBtn').addEventListener('click',enableVoice);
+    $('muteBtn').addEventListener('click',()=>{ state.muted=!state.muted; state.localStream?.getAudioTracks().forEach(t=>t.enabled=!state.muted); $('muteBtn').textContent=state.muted?'Unmute':'Mute'; });
+    $('video').addEventListener('play',()=>sendPlayback()); $('video').addEventListener('pause',()=>sendPlayback()); $('video').addEventListener('seeked',()=>sendPlayback());
+
+    async function startRoom(room,role){
+      if(!configured){ showError('Configure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in index.html first.',true); return; }
+      if(state.channel) await leaveRoom(false);
+      state.room=room; state.role=role; state.name=$('displayName').value.trim().slice(0,40)||'Guest'; state.tearingDown=false;
+      $('landing').classList.add('hidden'); $('roomView').classList.remove('hidden'); $('roomMeta').textContent=`Room ${room} · ${role==='host'?'You are the host':'You joined as a guest'}`;
+      $('playbackHint').textContent=role==='host'?'You control playback. Your partner follows your position.':'Playback is controlled by the host.';
+      $('video').controls=role==='host'; $('video').currentTime=0; $('messages').innerHTML='<p class="muted" id="emptyChat">No messages yet. Say hello.</p>'; state.messagesSeen.clear(); state.members.clear(); renderMembers(); setStatus('Connecting…'); showError('');
+      history.replaceState(null,'',`?room=${encodeURIComponent(room)}${role==='host'?'&role=host':''}`);
+      const channel=supabase.channel(`watch-party-${room}`,{config:{broadcast:{self:false},presence:{key:uid()}}}); state.channel=channel;
+      channel.on('broadcast',{event:'app'},({payload})=>handleEvent(payload));
+      channel.on('presence',{event:'sync'},()=>{ const presence=channel.presenceState(); state.members.clear(); for(const values of Object.values(presence)){ for(const person of values){ state.members.set(person.userId,{name:person.name,userId:person.userId}); } } renderMembers(); if(state.role==='host') void sendPlayback(); });
+      channel.subscribe(async status=>{ if(status==='SUBSCRIBED'){ state.connected=true; setStatus('Connected',true); await channel.track({name:state.name,userId:clientId,joinedAt:Date.now()}); if(role==='guest') await broadcast({type:'hello',userId:clientId}); } else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){ setStatus('Connection error'); showError('Could not connect to Supabase Realtime. Check project settings and network.'); } });
+      state.syncTimer=setInterval(()=>{ if(state.role==='host' && !$('video').paused) void sendPlayback(); },5000);
+    }
+    const clientId=uid();
+    async function broadcast(payload){ if(!state.channel)return; try{ await state.channel.send({type:'broadcast',event:'app',payload:{...payload,sender:clientId,at:Date.now()}}); }catch(e){console.error(e);showError('Could not send a room event.');} }
+    async function handleEvent(p){ if(!p||p.sender===clientId)return;
+      if(p.type==='chat'&&p.message){ addMessage(p.message); }
+      if(p.type==='playback'&&state.role==='guest'){ await applyPlayback(p); }
+      if(p.type==='hello'&&state.role==='host'){ await broadcast({type:'playback',time:$('video').currentTime,playing:!$('video').paused,seq:Date.now()}); }
+      if(p.type==='voice-request'&&state.role==='host'){ await makeOffer(); }
+      if(p.type==='signal'){ await handleSignal(p); }
+    }
+    function addMessage(m){ if(!m?.id||state.messagesSeen.has(m.id))return; state.messagesSeen.add(m.id); const empty=$('emptyChat'); if(empty)empty.remove(); const article=document.createElement('article'); article.className='message'; const strong=document.createElement('strong'); strong.textContent=m.name||'Guest'; const p=document.createElement('p'); p.textContent=m.text||''; article.append(strong,p); $('messages').append(article); $('messages').scrollTop=$('messages').scrollHeight; }
+    function renderMembers(){ $('participants').innerHTML=''; for(const person of state.members.values()){ const span=document.createElement('span'); span.className='chip'; span.textContent=person.name+(person.userId===clientId?' (you)':''); $('participants').append(span); } if(!state.members.size){ const span=document.createElement('span');span.className='chip';span.textContent=state.name+' (you)';$('participants').append(span); } }
+    async function sendPlayback(){ if(state.role!=='host'||!state.channel)return; const v=$('video'); await broadcast({type:'playback',time:v.currentTime,playing:!v.paused,seq:Date.now()}); }
+    let applyingRemote=false; let lastSequence=0;
+    async function applyPlayback(p){ if(p.seq&&p.seq<lastSequence)return; lastSequence=p.seq||Date.now(); const v=$('video'); applyingRemote=true; try{ if(Number.isFinite(p.time)&&Math.abs(v.currentTime-p.time)>1.0)v.currentTime=p.time; if(p.playing){ await v.play().catch(()=>{ $('playbackHint').textContent='Tap Play on the video once to allow playback on this device.'; }); }else v.pause(); } finally{ setTimeout(()=>applyingRemote=false,250); } }
+
+    function makePeer(){ if(state.pc)return state.pc; const pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}); state.pc=pc;
+      pc.onicecandidate=e=>{ if(e.candidate)void broadcast({type:'signal',kind:'ice',candidate:e.candidate.toJSON()}); };
+      pc.ontrack=e=>{ $('remoteAudio').srcObject=e.streams[0]; $('remoteAudio').play().catch(()=>{ $('voiceStatus').textContent='Tap the audio controls to start sound.'; }); $('voiceStatus').textContent='Voice connected'; };
+      pc.onconnectionstatechange=()=>{ if(pc.connectionState==='connected')$('voiceStatus').textContent='Voice connected'; if(['failed','disconnected'].includes(pc.connectionState))$('voiceStatus').textContent='Voice disconnected; try again or use a TURN relay.'; };
+      if(state.localStream)state.localStream.getTracks().forEach(track=>pc.addTrack(track,state.localStream)); return pc;
+    }
+    async function enableVoice(){ try{ if(!state.channel)throw new Error('Join a room first.'); if(!navigator.mediaDevices?.getUserMedia)throw new Error('Microphone unavailable. Open this site over HTTPS in Safari or Chrome.'); if(!state.localStream)state.localStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
+        const pc=makePeer(); if(pc.getSenders().length===0)state.localStream.getTracks().forEach(t=>pc.addTrack(t,state.localStream)); $('voiceBtn').textContent='Microphone enabled'; $('muteBtn').disabled=false; $('voiceStatus').textContent='Microphone ready; connecting…';
+        if(state.role==='guest')await broadcast({type:'voice-request'}); else $('voiceStatus').textContent='Microphone ready. Ask your partner to enable voice.';
+      }catch(e){console.error(e);$('voiceStatus').textContent=e.message||'Microphone access failed.';} }
+    async function makeOffer(){ try{ if(!state.localStream){ $('voiceStatus').textContent='Enable your microphone first, then ask your partner to retry.'; return; } const pc=makePeer(); const offer=await pc.createOffer(); await pc.setLocalDescription(offer); await broadcast({type:'signal',kind:'offer',description:offer}); $('voiceStatus').textContent='Calling partner…'; }catch(e){console.error(e);$('voiceStatus').textContent='Could not create voice offer.';} }
+    async function handleSignal(p){ try{ const pc=makePeer(); if(p.kind==='offer'&&state.role==='guest'){ await pc.setRemoteDescription(p.description); await flushCandidates(pc); const answer=await pc.createAnswer(); await pc.setLocalDescription(answer); await broadcast({type:'signal',kind:'answer',description:answer}); $('voiceStatus').textContent='Connecting voice…'; } else if(p.kind==='answer'&&state.role==='host'){ await pc.setRemoteDescription(p.description); await flushCandidates(pc); } else if(p.kind==='ice'&&p.candidate){ if(pc.remoteDescription)await pc.addIceCandidate(p.candidate); else state.remoteCandidates.push(p.candidate); } }catch(e){console.error(e);$('voiceStatus').textContent='Voice signaling failed. Try disabling and enabling voice again.';} }
+    async function flushCandidates(pc){ for(const candidate of state.remoteCandidates.splice(0)){ try{await pc.addIceCandidate(candidate);}catch(e){console.warn('ICE candidate skipped',e);} } }
+    async function leaveRoom(showLanding=true){ state.tearingDown=true; if(state.syncTimer)clearInterval(state.syncTimer); state.syncTimer=null; if(state.channel){try{await state.channel.untrack();}catch{} const old=state.channel; state.channel=null; try{await supabase.removeChannel(old);}catch{}} if(state.pc){state.pc.close();state.pc=null;} if(state.localStream){state.localStream.getTracks().forEach(t=>t.stop());state.localStream=null;} $('remoteAudio').srcObject=null; state.remoteCandidates=[];state.connected=false;state.members.clear();if(showLanding){$('roomView').classList.add('hidden');$('landing').classList.remove('hidden');history.replaceState(null,'',location.pathname);setStatus('Not connected');} }
+    window.addEventListener('pagehide',()=>{ state.localStream?.getTracks().forEach(t=>t.stop()); state.pc?.close(); });
+
+    // If an invitation link is opened, prefill the room ID; user taps Join to enter.
+    if(params.get('room')) $('roomIdInput').value=params.get('room');
+    if(!configured) showError('Setup required: add your Supabase URL and publishable key in this file, then redeploy.',true);
+  </script>
+</body>
+</html>
